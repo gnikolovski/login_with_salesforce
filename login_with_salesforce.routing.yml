@@ -1,0 +1,17 @@
+login_with_salesforce.admin_settings:
+  path: '/admin/config/services/login-with-salesforce'
+  defaults:
+    _form: '\Drupal\login_with_salesforce\Form\SettingsForm'
+    _title: 'Login with Salesforce'
+  requirements:
+    _permission: 'administer site configuration'
+
+login_with_salesforce.callback:
+  path: '/salesforce/callback'
+  defaults:
+    _controller: '\Drupal\login_with_salesforce\Controller\SalesforceController::callback'
+    _title: 'Login with Salesforce callback URL'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'

@@ -1,0 +1,6 @@
+name: 'Login with Salesforce'
+description: 'This module allows users to register and login to your Drupal site with their Salesforce account.'
+type: 'module'
+core: 8.x
+package: 'Authentication'
+configure: 'login_with_salesforce.admin_settings'
