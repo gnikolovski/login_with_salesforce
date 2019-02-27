@@ -4,6 +4,7 @@ namespace Drupal\login_with_salesforce\Controller;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserData;
 use GuzzleHttp\Client;
@@ -38,15 +39,23 @@ class SalesforceController extends ControllerBase {
   protected $userData;
 
   /**
+   * The logger service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * SalesforceController constructor.
    *
    * @param \GuzzleHttp\Client $http_client
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    */
-  public function __construct(Client $http_client, ConfigFactory $config_factory, UserData $user_data) {
+  public function __construct(Client $http_client, ConfigFactory $config_factory, UserData $user_data, LoggerChannelFactoryInterface $logger_factory) {
     $this->httpClient = $http_client;
     $this->configFactory = $config_factory->get('login_with_salesforce.settings');
     $this->userData = $user_data;
+    $this->loggerFactory = $logger_factory->get('login_with_salesforce');
   }
 
   /**
@@ -56,7 +65,8 @@ class SalesforceController extends ControllerBase {
     return new static(
       $container->get('http_client'),
       $container->get('config.factory'),
-      $container->get('user.data')
+      $container->get('user.data'),
+      $container->get('logger.factory')
     );
   }
 
@@ -101,6 +111,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
+      $this->loggerFactory->error($e->getMessage());
       return NULL;
     }
   }
@@ -162,6 +173,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
+      $this->loggerFactory->error($e->getMessage());
       return NULL;
     }
   }
