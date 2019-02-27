@@ -17,16 +17,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SalesforceController extends ControllerBase {
 
   /**
+   * The Http client.
+   *
    * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
   /**
+   * The config factory.
+   *
    * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $config_factory;
 
   /**
+   * The user data service.
+   *
    * @var \Drupal\user\UserData
    */
   protected $userData;
@@ -103,6 +109,8 @@ class SalesforceController extends ControllerBase {
    * Log in user.
    *
    * @param $token_data
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function loginUser($token_data) {
     $id = $token_data['id'];
