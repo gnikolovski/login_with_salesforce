@@ -103,7 +103,7 @@ class SalesforceController extends ControllerBase {
     try {
       $response = $this->httpClient->post($login_url . '/services/oauth2/token', [
         'form_params' => [
-          'grant_type' => 'password',
+          'grant_type' => 'authorization_code',
           'client_id' => $this->configFactory->get('client_id'),
           'client_secret' => $this->configFactory->get('client_secret'),
           'code' => $code,
@@ -113,7 +113,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
-      $this->loggerFactory->error('Error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
+      $this->loggerFactory->error('Request token error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }
   }
@@ -175,7 +175,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
-      $this->loggerFactory->error('Error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
+      $this->loggerFactory->error('Get user data error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }
   }
