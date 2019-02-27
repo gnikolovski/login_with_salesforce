@@ -103,7 +103,7 @@ class SalesforceController extends ControllerBase {
     try {
       $response = $this->httpClient->post($login_url . '/services/oauth2/token', [
         'form_params' => [
-          'grant_type' => 'authorization_code',
+          'grant_type' => 'password',
           'client_id' => $this->configFactory->get('client_id'),
           'client_secret' => $this->configFactory->get('client_secret'),
           'code' => $code,
