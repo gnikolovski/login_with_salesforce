@@ -36,7 +36,7 @@ class SettingsForm extends ConfigFormBase {
 
     $form['login_url'] = [
       '#type' => 'textfield',
-      '#title' => t('Login with Salesforce'),
+      '#title' => t('Salesforce login URL'),
       '#required' => TRUE,
       '#default_value' => $config->get('login_url'),
     ];
