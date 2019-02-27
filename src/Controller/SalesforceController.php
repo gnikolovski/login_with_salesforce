@@ -50,6 +50,8 @@ class SalesforceController extends ControllerBase {
    *
    * @param \GuzzleHttp\Client $http_client
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   * @param \Drupal\user\UserData $user_data
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    */
   public function __construct(Client $http_client, ConfigFactory $config_factory, UserData $user_data, LoggerChannelFactoryInterface $logger_factory) {
     $this->httpClient = $http_client;
@@ -111,7 +113,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
-      $this->loggerFactory->error($e->getMessage());
+      $this->loggerFactory->error('Error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }
   }
@@ -173,7 +175,7 @@ class SalesforceController extends ControllerBase {
 
       return json_decode($response->getBody()->getContents(), TRUE);
     } catch (\Exception $e) {
-      $this->loggerFactory->error($e->getMessage());
+      $this->loggerFactory->error('Error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }
   }
