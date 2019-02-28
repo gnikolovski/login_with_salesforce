@@ -37,6 +37,7 @@ class SettingsForm extends ConfigFormBase {
     $form['login_url'] = [
       '#type' => 'textfield',
       '#title' => t('Salesforce login URL'),
+      '#description' => t('If not otherwise specified use https://login.salesforce.com'),
       '#required' => TRUE,
       '#default_value' => $config->get('login_url'),
     ];
