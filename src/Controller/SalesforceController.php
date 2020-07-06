@@ -2,13 +2,13 @@
 
 namespace Drupal\login_with_salesforce\Controller;
 
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserData;
 use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class SalesforceController.
@@ -25,11 +25,11 @@ class SalesforceController extends ControllerBase {
   protected $httpClient;
 
   /**
-   * The config factory.
+   * The config.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config_factory;
+  protected $config;
 
   /**
    * The user data service.
@@ -46,18 +46,30 @@ class SalesforceController extends ControllerBase {
   protected $loggerFactory;
 
   /**
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $currentRequest;
+
+  /**
    * SalesforceController constructor.
    *
    * @param \GuzzleHttp\Client $http_client
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The htpp client.
    * @param \Drupal\user\UserData $user_data
+   *   The user data.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
    */
-  public function __construct(Client $http_client, ConfigFactory $config_factory, UserData $user_data, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(Client $http_client, UserData $user_data, LoggerChannelFactoryInterface $logger_factory, RequestStack $request_stack) {
     $this->httpClient = $http_client;
-    $this->configFactory = $config_factory->get('login_with_salesforce.settings');
+    $this->config = $this->configFactory->get('login_with_salesforce.settings');
     $this->userData = $user_data;
     $this->loggerFactory = $logger_factory->get('login_with_salesforce');
+    $this->currentRequest = $request_stack->getCurrentRequest();
   }
 
   /**
@@ -66,9 +78,9 @@ class SalesforceController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('http_client'),
-      $container->get('config.factory'),
       $container->get('user.data'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('request_stack')
     );
   }
 
@@ -76,7 +88,7 @@ class SalesforceController extends ControllerBase {
    * Callback method.
    */
   public function callback() {
-    $code = \Drupal::request()->query->get('code');
+    $code = $this->currentRequest->query->get('code');
     if (!$code) {
       return $this->redirect('user.login');
     }
@@ -93,9 +105,11 @@ class SalesforceController extends ControllerBase {
   /**
    * Gets token from Salesforce.
    *
-   * @param $code
+   * @param string $code
+   *   The code.
    *
    * @return string|null
+   *   The token.
    */
   protected function requestToken($code) {
     $login_url = $this->configFactory->get('login_url');
@@ -112,7 +126,8 @@ class SalesforceController extends ControllerBase {
       ]);
 
       return json_decode($response->getBody()->getContents(), TRUE);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->loggerFactory->error('Request token error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }
@@ -121,11 +136,10 @@ class SalesforceController extends ControllerBase {
   /**
    * Log in user.
    *
-   * @param $token_data
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @param array $token_data
+   *   The token data.
    */
-  protected function loginUser($token_data) {
+  protected function loginUser(array $token_data) {
     $id = $token_data['id'];
     $access_token = $token_data['access_token'];
     $refresh_token = $token_data['refresh_token'];
@@ -160,10 +174,13 @@ class SalesforceController extends ControllerBase {
   /**
    * Gets user data.
    *
-   * @param $url
-   * @param $access_token
+   * @param string $url
+   *   The url.
+   * @param string $access_token
+   *   The access token.
    *
    * @return mixed|null
+   *   The user data.
    */
   protected function getUserData($url, $access_token) {
     try {
@@ -174,7 +191,8 @@ class SalesforceController extends ControllerBase {
       ]);
 
       return json_decode($response->getBody()->getContents(), TRUE);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->loggerFactory->error('Get user data error in ' . $e->getFile() . ' at line ' . $e->getLine() . '. Message: ' . $e->getMessage());
       return NULL;
     }

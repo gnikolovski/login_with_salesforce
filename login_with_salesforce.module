@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * @file
+ * This is the primary module file.
+ */
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
 function login_with_salesforce_form_user_login_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['login_with_salesforce'] = [
@@ -19,6 +24,7 @@ function login_with_salesforce_form_user_login_form_alter(&$form, FormStateInter
  * Generates "Login with Salesforce" link.
  *
  * @return \Drupal\Core\Url
+ *   The url.
  */
 function login_with_salesforce_generate_login_link() {
   $config = \Drupal::configFactory()->get('login_with_salesforce.settings');
@@ -29,7 +35,7 @@ function login_with_salesforce_generate_login_link() {
       'response_type' => 'code',
       'client_id' => $config->get('client_id'),
       'redirect_uri' => $config->get('redirect_uri'),
-    ]
+    ],
   ]);
 
   return $url;

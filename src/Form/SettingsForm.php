@@ -4,6 +4,7 @@ namespace Drupal\login_with_salesforce\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SettingsForm.
@@ -11,6 +12,22 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\login_with_salesforce\Form
  */
 class SettingsForm extends ConfigFormBase {
+
+  /**
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $currentRequest;
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->currentRequest = $container->get('request_stack');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -36,32 +53,32 @@ class SettingsForm extends ConfigFormBase {
 
     $form['login_url'] = [
       '#type' => 'textfield',
-      '#title' => t('Salesforce login URL'),
-      '#description' => t('If not otherwise specified use https://login.salesforce.com'),
+      '#title' => $this->t('Salesforce login URL'),
+      '#description' => $this->t('If not otherwise specified use https://login.salesforce.com'),
       '#required' => TRUE,
       '#default_value' => $config->get('login_url'),
     ];
 
     $form['client_id'] = [
       '#type' => 'textfield',
-      '#title' => t('Consumer key'),
+      '#title' => $this->t('Consumer key'),
       '#required' => TRUE,
       '#default_value' => $config->get('client_id'),
     ];
 
     $form['client_secret'] = [
       '#type' => 'textfield',
-      '#title' => t('Consumer secret'),
+      '#title' => $this->t('Consumer secret'),
       '#required' => TRUE,
       '#default_value' => $config->get('client_secret'),
     ];
 
     $form['redirect_uri'] = [
       '#type' => 'textfield',
-      '#title' => t('Redirect Uri'),
+      '#title' => $this->t('Redirect Uri'),
       '#disabled' => TRUE,
       '#required' => TRUE,
-      '#default_value' => \Drupal::request()->getSchemeAndHttpHost() . '/salesforce/callback',
+      '#default_value' => $this->currentRequest->getSchemeAndHttpHost() . '/salesforce/callback',
     ];
 
     return parent::buildForm($form, $form_state);

@@ -1,21 +1,23 @@
 {
     "name": "gnikolovski/login_with_salesforce",
-    "description": "This module allows users to register and login to your Drupal site with their Salesforce account.",
+    "description": "Allows users to register and login to your Drupal site with their Salesforce account.",
     "type": "drupal-module",
     "homepage": "https://github.com/gnikolovski/login_with_salesforce",
     "authors": [
         {
             "name": "Goran Nikolovski",
-            "email": "nikolovski84@gmail.com",
-            "homepage": "http://gorannikolovski.com",
+            "email": "goran@gorannikolovski.com",
+            "homepage": "https://gorannikolovski.com",
             "role": "Developer"
         }
     ],
     "support": {
         "issues": "https://github.com/gnikolovski/login_with_salesforce/issues",
-        "email": "nikolovski84@gmail.com"
+        "email": "goran@gorannikolovski.com"
     },
     "license": "GPL-2.0+",
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "drupal/core": "^8 || ^9"
+    }
 }
