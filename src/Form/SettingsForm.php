@@ -25,7 +25,7 @@ class SettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->currentRequest = $container->get('request_stack');
+    $instance->currentRequest = $container->get('request_stack')->getCurrentRequest();
     return $instance;
   }
 
