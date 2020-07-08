@@ -19,7 +19,7 @@ login form.
 REQUIREMENTS
 ------------
 
-This module requires no modules outside of Drupal 8 core.
+This module requires no modules outside of Drupal core.
 
 
 INSTALLATION
