@@ -112,16 +112,16 @@ class SalesforceController extends ControllerBase {
    *   The token.
    */
   protected function requestToken($code) {
-    $login_url = $this->configFactory->get('login_url');
+    $login_url = $this->config->get('login_url');
 
     try {
       $response = $this->httpClient->post($login_url . '/services/oauth2/token', [
         'form_params' => [
           'grant_type' => 'authorization_code',
-          'client_id' => $this->configFactory->get('client_id'),
-          'client_secret' => $this->configFactory->get('client_secret'),
+          'client_id' => $this->config->get('client_id'),
+          'client_secret' => $this->config->get('client_secret'),
           'code' => $code,
-          'redirect_uri' => $this->configFactory->get('redirect_uri'),
+          'redirect_uri' => $this->config->get('redirect_uri'),
         ],
       ]);
 
@@ -142,7 +142,6 @@ class SalesforceController extends ControllerBase {
   protected function loginUser(array $token_data) {
     $id = $token_data['id'];
     $access_token = $token_data['access_token'];
-    $refresh_token = $token_data['refresh_token'];
     $issued_at = $token_data['issued_at'];
 
     $user_data = $this->getUserData($id, $access_token);
@@ -155,7 +154,6 @@ class SalesforceController extends ControllerBase {
     if ($user) {
       $this->userData->set('login_with_salesforce', $user->id(), 'id', $id);
       $this->userData->set('login_with_salesforce', $user->id(), 'access_token', $access_token);
-      $this->userData->set('login_with_salesforce', $user->id(), 'refresh_token', $refresh_token);
       $this->userData->set('login_with_salesforce', $user->id(), 'issued_at', $issued_at);
       user_login_finalize($user);
     }
