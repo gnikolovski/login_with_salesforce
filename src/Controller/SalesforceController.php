@@ -66,7 +66,7 @@ class SalesforceController extends ControllerBase {
    */
   public function __construct(Client $http_client, UserData $user_data, LoggerChannelFactoryInterface $logger_factory, RequestStack $request_stack) {
     $this->httpClient = $http_client;
-    $this->config = $this->configFactory->get('login_with_salesforce.settings');
+    $this->config = $this->config('login_with_salesforce.settings');
     $this->userData = $user_data;
     $this->loggerFactory = $logger_factory->get('login_with_salesforce');
     $this->currentRequest = $request_stack->getCurrentRequest();
